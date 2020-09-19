@@ -1,8 +1,12 @@
-console.log('hello world');
+
 /*
   * MODEL
   * space null if no play yet
 */
+
+
+let xWins = 0;
+let oWins = 0;
 
 // Board Init
 const makeBoard = () => {
@@ -79,6 +83,35 @@ const renderButton = () => {
   document.getElementById("app").insertBefore(restart, board);
 }
 
+let winScoreInit = (() => {
+  let oTally = document.createElement("div");
+  let oNumWins = document.createTextNode(`O has won: ${oWins} times`)
+  oTally.appendChild(oNumWins);
+  oTally.id = 'oTally';
+
+  let xTally = document.createElement("div");
+  let xNumWins = document.createTextNode(`X has won: ${xWins} times`);
+  xTally.appendChild(xNumWins);
+  xTally.id = 'xTally';
+
+  document.getElementById("app").appendChild(oTally);
+  document.getElementById("app").appendChild(xTally);
+})();
+
+const renderWinScore = () => {
+  let oTally = document.createElement("div");
+  let oNumWins = document.createTextNode(`O has won: ${oWins} times`)
+  oTally.appendChild(oNumWins);
+
+  let xTally = document.createElement("div");
+  let xNumWins = document.createTextNode(`X has won: ${xWins} times`);
+  xTally.appendChild(xNumWins);
+  debugger;
+  document.getElementById("oTally").replaceWith(oTally);
+  document.getElementById("xTally").replaceWith(xTally);
+  oTally.id = "oTally";
+  xTally.id = "xTally";
+}
 
 
 const renderBoard = () => {
@@ -118,26 +151,38 @@ const renderBoard = () => {
 * CONTROLLER
 * Changes board state based on click
 */
-let playerOneNext = true;
+let playerXNext = true;
 
 const onSpaceClick = (e) => {
   if (e.target.innerHTML === 'null ') {
     let idArr = e.target.id.split(', ');
-    currentPlayer = playerOneNext ? 'X' : 'O';
+    currentPlayer = playerXNext ? 'X' : 'O';
 
     board[idArr[0]][idArr[1]] = `${currentPlayer} `;
     renderBoard();
 
+    playerXNext = !playerXNext;
+
     if (checkWin()) {
+
+      if (currentPlayer === 'X') {
+        xWins++
+        PlayerXNext = true;
+      } else {
+        oWins++
+        playerXNext = false;
+      }
+
       let winTitle = document.createElement("div")
       let winText = document.createTextNode(`${currentPlayer} Wins!!!`)
+
       winTitle.appendChild(winText);
       winTitle.id = "win-title";
       document.getElementById("board").replaceWith(winTitle);
+      renderWinScore();
+
+
     }
-
-    playerOneNext = !playerOneNext;
-
   }
 }
 
